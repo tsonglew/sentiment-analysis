@@ -1,2 +1,13 @@
 # Sentiment_Analysis
-Sentiment Analysis on xueer comments
+Sentiment Analysis of comments on courses
+
+
+## Comments Sourses
+
+
+## Algorithm
+
+
+## LICENSE
+
+Apache-2.0
