@@ -44,6 +44,10 @@ taoke_url = "http://taoke.ziqiang.net.cn/api/course/public/elective/"
 
 
 # Config for Wuhan University of Technology Xuanxiuke
+xuanxiuke_url = "http://xuan.wutnews.net/ajax/Comment_Data_More.ashx?PageType=index&CommentType=-1&click_more_num="
 
 # Config for HUST ixuanxiu.com
+first_page = "http://hust.ixuanxiu.hustonline.net/classify/"
+second_page = "http://hust.ixuanxiu.hustonline.net/classify/science/"
+third_page = "http://hust.ixuanxiu.hustonline.net/classify/mixed/"
 ixuanxiu_url = "http://hust.ixuanxiu.hustonline.net/comment/all/"

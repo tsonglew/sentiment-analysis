@@ -11,13 +11,13 @@ from ..models import Comment
 
 
 def taoke():
-    print "Getting Response from %r ..." % taoke_url,
+    print "Getting Response from %r ..." % taoke_url
     r = requests.post(taoke_url, headers=taoke_headers)
 
     if r:
-        print "\b\b\bDone!"
+        print "Done!"
     else:
-        print "\b\b\bError!"
+        print "Error!"
         return ""
 
     classes = r.json()['public_elective']
@@ -26,7 +26,7 @@ def taoke():
         classes_no.append(each_class['number'])
 
     for each_no in classes_no:
-        print "Checking on Course  %11d ..." % each_no,
+        print "Checking on Course  %11d ..." % each_no
         cls_r = requests.get("".join([taoke_url, "%d"%each_no, "/comment/"]))
         comments = cls_r.json()['comment']
         comment_count = 0
@@ -39,6 +39,6 @@ def taoke():
             db.session.add(c)
             db.session.commit()
             comment_count += 1
-        print "\b\b\b\b\b %d comments handled" % comment_count
+        print "%d comments handled" % comment_count
 
     print "All Courses From Wuhan University Taoke Handled!"

@@ -110,9 +110,10 @@ class Comment(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
+    parsed = db.Column(db.Text)
     emotion = db.Column(db.Integer) # -1: negative, 0: neuter, 1: positive
 
     def __repr__(self):
         emotion_list = ["negative", "neuter", "positive"]
-        return "<Comment %d> Emotion: %s" % self.id, emotion_list[self.emotion]
+        return "<Comment {i}: emotion[{emo}]>".format(i=self.id, emo=emotion_list[self.emotion+1])
 

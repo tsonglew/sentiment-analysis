@@ -1,11 +1,14 @@
 # Sentiment_Analysis
-Sentiment Analysis of comments on courses
+
+Comments Analysis With Machining Learning
 
 
-## Comments Sourses
+## Comments Sources
 
 
 ## Algorithm
+
+SVM
 
 
 ## LICENSE
