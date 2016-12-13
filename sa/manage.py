@@ -179,7 +179,7 @@ def get_theta():
     step = 0.01
     comments = Comment.query.all()[:100]
     print "Comments gotten! Training..."
-    for m in range(10000):
+    for m in range(1000):
         for comment in comments:
             if comment.emotion != -1:
                 x = [1, float(comment.pos_count), float(comment.neg_count)]
