@@ -111,9 +111,19 @@ class Comment(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     body = db.Column(db.Text)
     parsed = db.Column(db.Text)
-    emotion = db.Column(db.Integer) # -1: negative, 0: neuter, 1: positive
+    emotion = db.Column(db.Integer, default=-1) # 0: negative, -1: neuter, 1: positive
+    analysis_score = db.Column(db.Float, default=0.5)
+    pos_count = db.Column(db.Integer, default=0)
+    neg_count = db.Column(db.Integer, default=0)
 
     def __repr__(self):
         emotion_list = ["negative", "neuter", "positive"]
-        return "<Comment {i}: emotion[{emo}]>".format(i=self.id, emo=emotion_list[self.emotion+1])
-
+        if self.analysis_score == 1.0:
+            emo = 'Positive'
+        elif self.analysis_score == 0:
+            emo = 'Negative'
+        elif self.analysis_score == 0.5:
+            emo = 'Neuter'
+        else:
+            emo = 'Not set'
+        return "<Comment {i}: emotion[{emo}]>".format(i=self.id, emo=emo)

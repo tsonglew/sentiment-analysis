@@ -3,8 +3,7 @@
 project management
  -- database management
     -- python manage.py db init: create migrations folder
-    -- python manage.py db migrate: database migrate
-    -- python manage.py db upgrate: upgrade database
+    -- python manage.py db migrate: database migrate -- python manage.py db upgrate: upgrade database
     -- python manage.py shell
        >> Role.insert_roles() : create user roles
 
@@ -34,6 +33,7 @@ project management
 
 import sys
 import os
+from emo_list import pos_list, neg_list
 from flask.ext.script import Manager, Shell
 from flask.ext.migrate import Migrate, MigrateCommand
 from app import db, app
@@ -112,14 +112,14 @@ def adduser():
 def crawler():
     """crawler"""
     print "Uncomment the utilities to start the crawler!"
-    # from app.crawlers.taoke import taoke
-    # taoke()
+    from app.crawlers.taoke import taoke
+    taoke()
 
-    # from app.crawlers.ixuanxiu import ixuanxiu
-    # ixuanxiu()
+    from app.crawlers.ixuanxiu import ixuanxiu
+    ixuanxiu()
 
-    # from app.crawlers.xuanxiuke import xuanxiuke
-    # xuanxiuke()
+    from app.crawlers.xuanxiuke import xuanxiuke
+    xuanxiuke()
 
 
 @manager.command
@@ -128,8 +128,6 @@ def parse():
     import jieba
     import jieba.posseg as pseg
 
-    handled_count = 0
-
     # Load User's Dictionary
     path_list = os.getcwd().split('/')
     path_list.append("dict.txt")
@@ -137,23 +135,83 @@ def parse():
     jieba.load_userdict(dict_path)
 
     # Disimss These Flags
-    dismiss = ['b', 'c', 'x', 'r', 'm', 'uj', 'u', 'p', 'q', 'ns', 'nr', 'nr1',
-            'nr2', 'nsf', 'n', 'nz', 'uz', 't', 'ul', 'k', 'f', 'ud', 'ug', 'uv']
+    dismiss = ['b', 'c', 'x', 'r', 'uj', 'u', 'p', 'q', 'ns', 'nr', 'nr1',
+            'nr2', 'nsf', 'n', 'uz', 't', 'ul', 'k', 'f', 'ud', 'ug', 'uv']
 
     comments = Comment.query.all()
     for comment in comments:
-        word_list = []
-        pseg_cut = pseg.cut(comment.body)
-        for word, flag in pseg_cut:
-            if flag not in dismiss:
-                word_list.append(word)
-        comment.parsed = '/'.join(word_list)
-        handled_count += 1
-        db.session.add(comment)
-        print "Comment %04d Parsed!" % handled_count
+         word_list = []
+         pseg_cut = pseg.cut(comment.body)
+         for word, flag in pseg_cut:
+             if flag not in dismiss:
+                 word_list.append(word)
+         comment.parsed = '/'.join(word_list)
+         db.session.add(comment)
+         print "Comment %04d Parsed!" % comment.id
 
     db.session.commit()
     print "ALL DONE!"
+
+
+@manager.command
+def get_count():
+    comments = Comment.query.all()
+    for comment in comments:
+        for word in comment.parsed.split('/'):
+            if word in pos_list:
+                comment.pos_count += 1
+            elif word in neg_list:
+                comment.neg_count += 1
+            elif '80' <= word and word <= '99':
+                comment.pos_count += 1
+            elif '0' <= word and word < '80':
+                comment.neg_count += 1
+        db.session.add(comment)
+        print "Comment %04d counted!" % comment.id
+    db.session.commit()
+    print "ALL DONE!"
+
+
+@manager.command
+def get_theta():
+    import math
+    theta = [0.0, 0.0, 0.0]
+    step = 0.01
+    comments = Comment.query.all()[:100]
+    print "Comments gotten! Training..."
+    for m in range(10000):
+        for comment in comments:
+            if comment.emotion != -1:
+                x = [1, float(comment.pos_count), float(comment.neg_count)]
+                feature_sum = 0
+                for i in range(3):
+                    feature_sum += theta[i]*x[i]
+
+                h = 1 / (1+math.e**-(feature_sum))
+                for i in range(3):
+                    theta[i] = theta[i] + step*(comment.emotion-h)*x[i]
+    print "Theta Gotten: ", theta
+
+
+@manager.command
+def get_emotion():
+    print "Calculating thetas..."
+    get_theta()
+    print "Done!"
+    comments = Comment.query.filter_by(emotion=-1).all()
+    for comment in comments:
+        x = [1, float(comment.pos_count), float(comment.neg_count)]
+        hypothesis = 0
+        feature_sum = 0
+        for i in range(3):
+            feature_sum += theta[i]*x[i]
+        hypothesis = 1 / (1+math.e**-(feature_sum))
+        if 0 < hypothesis < 0.4:
+            comment.analysis_score = 0
+        elif 0.4 <= hypothesis < 0.6:
+            comment.analysis_score = 0.5
+        elif 0.6 <= hypothesis < 1:
+            comment.analysis_score = 1
 
 
 if __name__ == '__main__':

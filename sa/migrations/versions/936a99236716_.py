@@ -1,19 +1,17 @@
 """empty message
 
-Revision ID: c088d36a5ece
-Revises: 
-Create Date: 2016-12-02 14:39:20.705676
+Revision ID: 936a99236716
+Revises: None
+Create Date: 2016-12-13 11:02:39.546530
 
 """
-from alembic import op
-import sqlalchemy as sa
-
 
 # revision identifiers, used by Alembic.
-revision = 'c088d36a5ece'
+revision = '936a99236716'
 down_revision = None
-branch_labels = None
-depends_on = None
+
+from alembic import op
+import sqlalchemy as sa
 
 
 def upgrade():
@@ -21,7 +19,10 @@ def upgrade():
     op.create_table('comments',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('body', sa.Text(), nullable=True),
+    sa.Column('parsed', sa.Text(), nullable=True),
     sa.Column('emotion', sa.Integer(), nullable=True),
+    sa.Column('pos_count', sa.Integer(), nullable=True),
+    sa.Column('neg_count', sa.Integer(), nullable=True),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('roles',
