@@ -23,8 +23,5 @@ login_manager.login_view = 'auth.login'
 # admin site
 from admin import views
 
-from main import main
-app.register_blueprint(main, url_prefix='/main')
-
 from auth import auth
 app.register_blueprint(auth, url_prefix="/auth")

@@ -1,35 +1,4 @@
-# coding: utf-8
-"""
-project management
- -- database management
-    -- python manage.py db init: create migrations folder
-    -- python manage.py db migrate: database migrate -- python manage.py db upgrate: upgrade database
-    -- python manage.py shell
-       >> Role.insert_roles() : create user roles
-
- -- add administrator
-    -- python manage.py admin
-       \_admin username:
-       \_admin email:
-       \_admin password:
-
- -- add users
-    -- python manage.py adduser
-       \_username:
-       \_password:
-       \_email:
-       \_[1:moderator 2:admin 3:user]:
-
- -- run project
-    -- python manage.py runserver
-
- -- shell environment
-    -- python manage.py shell
-
- -- run your unit tests
-    -- python manage.py test
-
-"""
+# -*- coding: utf-8 -*-
 
 import sys
 import os
@@ -135,8 +104,8 @@ def parse():
     jieba.load_userdict(dict_path)
 
     # Disimss These Flags
-    dismiss = ['b', 'c', 'x', 'r', 'uj', 'u', 'p', 'q', 'ns', 'nr', 'nr1',
-            'nr2', 'nsf', 'n', 'uz', 't', 'ul', 'k', 'f', 'ud', 'ug', 'uv']
+    dismiss = ['b', 'c', 'r', 'uj', 'u', 'p', 'q', 'uz', 't', 'ul', 'k', 'f',
+            'ud', 'ug', 'uv']
 
     comments = Comment.query.all()
     for comment in comments:
